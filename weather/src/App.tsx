@@ -7,14 +7,15 @@ const App: React.FC = () => {
   // Initial state for "weather" state of the compontent is null.
   const [weather, setWeather] = useState<Weather>(null as unknown as Weather);
 
-  // useEffect hook has no dependency state (no seconf parameter is provided), so it executes only for the initial component render.
+  // Deliberately pass the empty deps array as the second parameter to avoid executing the hook as the "city" state changes.
   useEffect(() => {
-    // getWeather returns Promise<void> but the callback to useEffect must return woid. Wrap the async function to invoke inside a non-async wrapper.
+    // getWeather returns Promise<void> but the callback to useEffect must return void. Wrap the async function to invoke inside a non-async wrapper.
     const localWrapper = async () => {
       await getWeather(city);
     };
     localWrapper();
-  });
+// eslint-disable-next-line    
+  }, []);
 
   const baseUrl = 'http://api.openweathermap.org/data/2.5/weather?q=';
   const query = "&units=metric&appid=<put your appid here>";
@@ -37,13 +38,13 @@ const App: React.FC = () => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     getWeather(city);
-  }
+  };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Updating the component state as React onChange fires.
     // React onChange behaves as DOM native onInput, i.e. fires continuously as the user types.
     setCity(event.target.value);
-  }
+  };
 
   return (
     <div>
