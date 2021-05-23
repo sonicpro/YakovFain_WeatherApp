@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { Weather } from './Interfaces/Weather.js';
+import { Weather } from './Interfaces/Weather';
+import WeatherInfo from './weather-info';
 
 const App: React.FC = () => {
   // Initial state for the component is "London".
@@ -41,20 +42,29 @@ const App: React.FC = () => {
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // Updating the component state as React onChange fires.
-    // React onChange behaves as DOM native onInput, i.e. fires continuously as the user types.
     setCity(event.target.value);
   };
 
+  // Defining the type guard for the weather state.
+  // Type guard is a function that has a return type of type predicate (like "value is boolean").
+  // Anytyme that the function parameter type is compatible with the type specified in the predicate,
+  // the parameter will be narrowed to that type.
+  const has = (value: any): value is boolean => value;
+
   return (
-    <div>
-      <form onSubmit = {handleSubmit}>
-        <input type="text" placeholder="Enter city" onChange={handleChange} />
+    <>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Enter city" onInput={handleChange} />
         <button type="submit">Get weather</button>
-        <h2>City: {city}</h2>
-        {weather && <h2>Temperature: {weather.temp}C</h2>}
       </form>
-    </div>
+      {has(weather) ? (
+        <WeatherInfo weather={weather}>
+          <strong>Hello from the parent!</strong>
+        </WeatherInfo>
+      ) : (
+        <h2>No weather available</h2>
+      )}
+    </>
   );
 }
 
